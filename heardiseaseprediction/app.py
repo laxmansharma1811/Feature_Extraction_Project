@@ -1,6 +1,7 @@
 import streamlit as st
 import joblib
 import pandas as pd
+import os
 
 # -----------------------------
 # Page Config
@@ -14,7 +15,12 @@ st.set_page_config(
 # -----------------------------
 # Load Trained Pipeline
 # -----------------------------
-model = joblib.load("heart_pipeline.pkl")
+model_path = "heart_pipeline.pkl"
+if not os.path.exists(model_path):
+    st.error(f"Model file '{model_path}' not found.")
+    st.stop()
+
+model = joblib.load(model_path)
 
 # -----------------------------
 # App Title
