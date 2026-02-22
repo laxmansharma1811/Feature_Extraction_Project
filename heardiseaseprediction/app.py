@@ -451,30 +451,6 @@ st.markdown("""
     }
     .heartbeat { animation: heartbeat 2s ease-in-out infinite; }
 
-    /* ===== TABS ===== */
-    .stTabs [data-baseweb="tab-list"] {
-        gap: 4px;
-        background: rgba(14, 21, 37, 0.6);
-        border-radius: 16px;
-        padding: 5px;
-        border: 1px solid var(--glass-border);
-    }
-    .stTabs [data-baseweb="tab"] {
-        border-radius: 12px;
-        color: var(--text-secondary);
-        font-family: 'Inter', sans-serif;
-        font-weight: 600;
-        padding: 0.65rem 1.4rem;
-        font-size: 0.9rem;
-    }
-    .stTabs [aria-selected="true"] {
-        background: rgba(230,57,70,0.12) !important;
-        color: var(--primary-light) !important;
-        border-bottom: none !important;
-    }
-    .stTabs [data-baseweb="tab-highlight"],
-    .stTabs [data-baseweb="tab-border"] { display: none; }
-
     /* ===== EXPANDER ===== */
     .streamlit-expanderHeader {
         background: rgba(14,21,37,0.6) !important;
@@ -638,311 +614,307 @@ else:
 
 
 # =============================================
-#  TABS: DATA ENTRY + RESULTS
+#  PATIENT DATA ENTRY
 # =============================================
-tab_input, tab_result = st.tabs(["&#128203;  Patient Data Entry", "&#128202;  Prediction Results"])
 
-# ----- TAB 1: INPUT -----
-with tab_input:
-
-    # --- Patient Demographics ---
-    st.markdown("""
-    <div class="section-hdr">
-        <div class="section-ico ico-red">&#128100;</div>
-        <div>
-            <p class="section-lbl">Patient Demographics</p>
-            <p class="section-sub">Basic patient information</p>
-        </div>
+# --- Patient Demographics ---
+st.markdown("""
+<div class="section-hdr">
+    <div class="section-ico ico-red">&#128100;</div>
+    <div>
+        <p class="section-lbl">Patient Demographics</p>
+        <p class="section-sub">Basic patient information</p>
     </div>
-    """, unsafe_allow_html=True)
+</div>
+""", unsafe_allow_html=True)
 
-    c1, c2, c3 = st.columns(3)
-    with c1:
-        Age = st.number_input("Age (years)", min_value=1, max_value=120, value=40,
-                               help="Patient's age in years")
-    with c2:
-        Sex = st.selectbox("Biological Sex", ["M", "F"],
-                            help="M = Male, F = Female")
-    with c3:
-        ChestPainType = st.selectbox("Chest Pain Type", ["ATA", "NAP", "TA", "ASY"],
-                                      help="ATA: Atypical Angina | NAP: Non-Anginal | TA: Typical Angina | ASY: Asymptomatic")
+c1, c2, c3 = st.columns(3)
+with c1:
+    Age = st.number_input("Age (years)", min_value=1, max_value=120, value=40,
+                           help="Patient's age in years")
+with c2:
+    Sex = st.selectbox("Biological Sex", ["M", "F"],
+                        help="M = Male, F = Female")
+with c3:
+    ChestPainType = st.selectbox("Chest Pain Type", ["ATA", "NAP", "TA", "ASY"],
+                                  help="ATA: Atypical Angina | NAP: Non-Anginal | TA: Typical Angina | ASY: Asymptomatic")
+
+st.markdown('<div class="divider"></div>', unsafe_allow_html=True)
+
+# --- Vital Signs ---
+st.markdown("""
+<div class="section-hdr">
+    <div class="section-ico ico-blue">&#128137;</div>
+    <div>
+        <p class="section-lbl">Vital Signs & Blood Work</p>
+        <p class="section-sub">Clinical measurements and lab results</p>
+    </div>
+</div>
+""", unsafe_allow_html=True)
+
+c4, c5, c6 = st.columns(3)
+with c4:
+    RestingBP = st.number_input("Resting BP (mm Hg)", min_value=0, max_value=300, value=120,
+                                 help="Resting blood pressure in mm Hg")
+with c5:
+    Cholesterol = st.number_input("Cholesterol (mg/dl)", min_value=0, max_value=600, value=200,
+                                   help="Serum cholesterol in mg/dl")
+with c6:
+    FastingBS = st.selectbox("Fasting Blood Sugar > 120 mg/dl", [0, 1],
+                              help="0 = No, 1 = Yes")
+
+st.markdown('<div class="divider"></div>', unsafe_allow_html=True)
+
+# --- Cardiac Assessment ---
+st.markdown("""
+<div class="section-hdr">
+    <div class="section-ico ico-grn">&#129728;</div>
+    <div>
+        <p class="section-lbl">Cardiac Assessment</p>
+        <p class="section-sub">Heart function and exercise response</p>
+    </div>
+</div>
+""", unsafe_allow_html=True)
+
+c7, c8 = st.columns(2)
+with c7:
+    RestingECG = st.selectbox("Resting ECG", ["Normal", "ST", "LVH"],
+                               help="Normal | ST-T wave abnormality | Left ventricular hypertrophy")
+    ExerciseAngina = st.selectbox("Exercise Induced Angina", ["N", "Y"],
+                                   help="Y = Yes, N = No")
+with c8:
+    MaxHR = st.number_input("Max Heart Rate (bpm)", min_value=50, max_value=250, value=150,
+                             help="Maximum heart rate achieved during exercise")
+    Oldpeak = st.number_input("Oldpeak (ST Depression)", min_value=-5.0, max_value=10.0, value=1.0,
+                               step=0.1, help="ST depression induced by exercise relative to rest")
+
+ST_Slope = st.selectbox("ST Slope", ["Up", "Flat", "Down"],
+                         help="Up: Upsloping | Flat | Down: Downsloping")
+
+st.markdown('<div class="divider"></div>', unsafe_allow_html=True)
+
+# --- Input Summary ---
+st.markdown("""
+<div class="section-hdr">
+    <div class="section-ico ico-gold">&#128203;</div>
+    <div>
+        <p class="section-lbl">Quick Summary</p>
+        <p class="section-sub">Review your entries before analysis</p>
+    </div>
+</div>
+""", unsafe_allow_html=True)
+
+m1, m2, m3, m4 = st.columns(4)
+for col, (lbl, val, unit) in zip(
+    [m1, m2, m3, m4],
+    [("Age", str(Age), "yrs"), ("Resting BP", str(RestingBP), "mmHg"),
+     ("Cholesterol", str(Cholesterol), "mg/dl"), ("Max HR", str(MaxHR), "bpm")]
+):
+    with col:
+        st.markdown(f"""
+        <div class="metric-box">
+            <div class="metric-val">{val}</div>
+            <div class="metric-lbl">{lbl} ({unit})</div>
+        </div>
+        """, unsafe_allow_html=True)
+
+st.markdown("<br/>", unsafe_allow_html=True)
+
+m5, m6, m7, m8 = st.columns(4)
+for col, (lbl, val) in zip(
+    [m5, m6, m7, m8],
+    [("Sex", Sex), ("Chest Pain", ChestPainType),
+     ("ECG", RestingECG), ("Oldpeak", str(Oldpeak))]
+):
+    with col:
+        st.markdown(f"""
+        <div class="metric-box">
+            <div class="metric-val" style="font-size:1.5rem;">{val}</div>
+            <div class="metric-lbl">{lbl}</div>
+        </div>
+        """, unsafe_allow_html=True)
+
+st.markdown("<br/>", unsafe_allow_html=True)
+
+# --- Predict Button ---
+predict_clicked = st.button("&#129728;  Analyze Heart Health", use_container_width=True)
+
+
+# =============================================
+#  PREDICTION RESULTS (shown below the button)
+# =============================================
+if predict_clicked and model_loaded:
 
     st.markdown('<div class="divider"></div>', unsafe_allow_html=True)
 
-    # --- Vital Signs ---
+    # Loading animation
+    with st.spinner(""):
+        loader = st.empty()
+        loader.markdown("""
+        <div style="text-align:center; padding: 3rem;">
+            <div class="heartbeat" style="font-size: 4rem; margin-bottom: 1rem;">&#129728;</div>
+            <div style="font-family: 'Space Grotesk', sans-serif; font-size: 1.2rem;
+                        color: #F1FAEE; font-weight: 700;">Analyzing cardiac parameters...</div>
+            <div style="font-size: 0.85rem; color: #7B8794; margin-top: 0.5rem;">
+                Running ML model inference</div>
+        </div>
+        """, unsafe_allow_html=True)
+        time.sleep(1.5)
+        loader.empty()
+
+    # Section header for results
     st.markdown("""
     <div class="section-hdr">
-        <div class="section-ico ico-blue">&#128137;</div>
+        <div class="section-ico ico-red">&#128202;</div>
         <div>
-            <p class="section-lbl">Vital Signs & Blood Work</p>
-            <p class="section-sub">Clinical measurements and lab results</p>
+            <p class="section-lbl">Prediction Results</p>
+            <p class="section-sub">AI-powered cardiac risk assessment</p>
         </div>
     </div>
     """, unsafe_allow_html=True)
 
-    c4, c5, c6 = st.columns(3)
-    with c4:
-        RestingBP = st.number_input("Resting BP (mm Hg)", min_value=0, max_value=300, value=120,
-                                     help="Resting blood pressure in mm Hg")
-    with c5:
-        Cholesterol = st.number_input("Cholesterol (mg/dl)", min_value=0, max_value=600, value=200,
-                                       help="Serum cholesterol in mg/dl")
-    with c6:
-        FastingBS = st.selectbox("Fasting Blood Sugar > 120 mg/dl", [0, 1],
-                                  help="0 = No, 1 = Yes")
+    # Build input & predict
+    input_data = {
+        "Age": Age, "Sex": Sex, "ChestPainType": ChestPainType,
+        "RestingBP": RestingBP, "Cholesterol": Cholesterol, "FastingBS": FastingBS,
+        "RestingECG": RestingECG, "MaxHR": MaxHR, "ExerciseAngina": ExerciseAngina,
+        "Oldpeak": Oldpeak, "ST_Slope": ST_Slope
+    }
+    input_df = pd.DataFrame([input_data])
+    prediction = model.predict(input_df)
+    probability = model.predict_proba(input_df)
 
-    st.markdown('<div class="divider"></div>', unsafe_allow_html=True)
+    risk_pct = probability[0][1] * 100
+    safe_pct = probability[0][0] * 100
 
-    # --- Cardiac Assessment ---
-    st.markdown("""
-    <div class="section-hdr">
-        <div class="section-ico ico-grn">&#129728;</div>
-        <div>
-            <p class="section-lbl">Cardiac Assessment</p>
-            <p class="section-sub">Heart function and exercise response</p>
-        </div>
-    </div>
-    """, unsafe_allow_html=True)
-
-    c7, c8 = st.columns(2)
-    with c7:
-        RestingECG = st.selectbox("Resting ECG", ["Normal", "ST", "LVH"],
-                                   help="Normal | ST-T wave abnormality | Left ventricular hypertrophy")
-        ExerciseAngina = st.selectbox("Exercise Induced Angina", ["N", "Y"],
-                                       help="Y = Yes, N = No")
-    with c8:
-        MaxHR = st.number_input("Max Heart Rate (bpm)", min_value=50, max_value=250, value=150,
-                                 help="Maximum heart rate achieved during exercise")
-        Oldpeak = st.number_input("Oldpeak (ST Depression)", min_value=-5.0, max_value=10.0, value=1.0,
-                                   step=0.1, help="ST depression induced by exercise relative to rest")
-
-    ST_Slope = st.selectbox("ST Slope", ["Up", "Flat", "Down"],
-                             help="Up: Upsloping | Flat | Down: Downsloping")
-
-    st.markdown('<div class="divider"></div>', unsafe_allow_html=True)
-
-    # --- Input Summary ---
-    st.markdown("""
-    <div class="section-hdr">
-        <div class="section-ico ico-gold">&#128203;</div>
-        <div>
-            <p class="section-lbl">Quick Summary</p>
-            <p class="section-sub">Review your entries before analysis</p>
-        </div>
-    </div>
-    """, unsafe_allow_html=True)
-
-    m1, m2, m3, m4 = st.columns(4)
-    for col, (lbl, val, unit) in zip(
-        [m1, m2, m3, m4],
-        [("Age", str(Age), "yrs"), ("Resting BP", str(RestingBP), "mmHg"),
-         ("Cholesterol", str(Cholesterol), "mg/dl"), ("Max HR", str(MaxHR), "bpm")]
-    ):
-        with col:
-            st.markdown(f"""
-            <div class="metric-box">
-                <div class="metric-val">{val}</div>
-                <div class="metric-lbl">{lbl} ({unit})</div>
-            </div>
-            """, unsafe_allow_html=True)
-
-    st.markdown("<br/>", unsafe_allow_html=True)
-
-    m5, m6, m7, m8 = st.columns(4)
-    for col, (lbl, val) in zip(
-        [m5, m6, m7, m8],
-        [("Sex", Sex), ("Chest Pain", ChestPainType),
-         ("ECG", RestingECG), ("Oldpeak", str(Oldpeak))]
-    ):
-        with col:
-            st.markdown(f"""
-            <div class="metric-box">
-                <div class="metric-val" style="font-size:1.5rem;">{val}</div>
-                <div class="metric-lbl">{lbl}</div>
-            </div>
-            """, unsafe_allow_html=True)
-
-    st.markdown("<br/>", unsafe_allow_html=True)
-
-    # --- Predict Button ---
-    predict_clicked = st.button("&#129728;  Analyze Heart Health", use_container_width=True)
-
-
-# ----- TAB 2: RESULTS -----
-with tab_result:
-    if predict_clicked and model_loaded:
-
-        # Loading animation
-        with st.spinner(""):
-            loader = st.empty()
-            loader.markdown("""
-            <div style="text-align:center; padding: 3rem;">
-                <div class="heartbeat" style="font-size: 4rem; margin-bottom: 1rem;">&#129728;</div>
-                <div style="font-family: 'Space Grotesk', sans-serif; font-size: 1.2rem;
-                            color: #F1FAEE; font-weight: 700;">Analyzing cardiac parameters...</div>
-                <div style="font-size: 0.85rem; color: #7B8794; margin-top: 0.5rem;">
-                    Running ML model inference</div>
-            </div>
-            """, unsafe_allow_html=True)
-            time.sleep(1.5)
-            loader.empty()
-
-        # Build input & predict
-        input_data = {
-            "Age": Age, "Sex": Sex, "ChestPainType": ChestPainType,
-            "RestingBP": RestingBP, "Cholesterol": Cholesterol, "FastingBS": FastingBS,
-            "RestingECG": RestingECG, "MaxHR": MaxHR, "ExerciseAngina": ExerciseAngina,
-            "Oldpeak": Oldpeak, "ST_Slope": ST_Slope
-        }
-        input_df = pd.DataFrame([input_data])
-        prediction = model.predict(input_df)
-        probability = model.predict_proba(input_df)
-
-        risk_pct = probability[0][1] * 100
-        safe_pct = probability[0][0] * 100
-
-        # --- HIGH RISK ---
-        if prediction[0] == 1:
-            st.markdown(f"""
-            <div class="result-card result-danger slide-up pulse-glow">
-                <div style="display: flex; align-items: flex-start; gap: 2rem; flex-wrap: wrap;">
-                    <div style="flex: 1; min-width: 260px;">
-                        <div class="result-ico">&#128680;</div>
-                        <div class="result-ttl">High Risk Detected</div>
-                        <p style="color: #7B8794; font-size: 0.9rem; line-height: 1.7; margin-bottom: 1rem;">
-                            The AI model has identified elevated cardiac risk markers.
-                            Immediate consultation with a cardiologist is strongly recommended.
-                        </p>
-                        <div class="result-lbl">Risk Probability</div>
-                        <div class="result-prob">{risk_pct:.1f}%</div>
-                        <div class="risk-bar-bg">
-                            <div class="risk-bar-fill bar-danger" style="width: {risk_pct}%;"></div>
-                        </div>
+    # --- HIGH RISK ---
+    if prediction[0] == 1:
+        st.markdown(f"""
+        <div class="result-card result-danger slide-up pulse-glow">
+            <div style="display: flex; align-items: flex-start; gap: 2rem; flex-wrap: wrap;">
+                <div style="flex: 1; min-width: 260px;">
+                    <div class="result-ico">&#128680;</div>
+                    <div class="result-ttl">High Risk Detected</div>
+                    <p style="color: #7B8794; font-size: 0.9rem; line-height: 1.7; margin-bottom: 1rem;">
+                        The AI model has identified elevated cardiac risk markers.
+                        Immediate consultation with a cardiologist is strongly recommended.
+                    </p>
+                    <div class="result-lbl">Risk Probability</div>
+                    <div class="result-prob">{risk_pct:.1f}%</div>
+                    <div class="risk-bar-bg">
+                        <div class="risk-bar-fill bar-danger" style="width: {risk_pct}%;"></div>
                     </div>
-                    <div style="flex: 0 0 210px; min-width: 180px;">
-                        <div class="metric-box" style="margin-bottom: 0.8rem; border-color: rgba(239,71,111,0.2);">
-                            <div class="metric-val" style="color: #EF476F;">{risk_pct:.1f}%</div>
-                            <div class="metric-lbl">Disease Risk</div>
-                        </div>
-                        <div class="metric-box" style="border-color: rgba(69,123,157,0.2);">
-                            <div class="metric-val" style="color: #A8DADC;">{safe_pct:.1f}%</div>
-                            <div class="metric-lbl">Safe Margin</div>
-                        </div>
+                </div>
+                <div style="flex: 0 0 210px; min-width: 180px;">
+                    <div class="metric-box" style="margin-bottom: 0.8rem; border-color: rgba(239,71,111,0.2);">
+                        <div class="metric-val" style="color: #EF476F;">{risk_pct:.1f}%</div>
+                        <div class="metric-lbl">Disease Risk</div>
+                    </div>
+                    <div class="metric-box" style="border-color: rgba(69,123,157,0.2);">
+                        <div class="metric-val" style="color: #A8DADC;">{safe_pct:.1f}%</div>
+                        <div class="metric-lbl">Safe Margin</div>
                     </div>
                 </div>
             </div>
-            """, unsafe_allow_html=True)
-
-        # --- LOW RISK ---
-        else:
-            st.markdown(f"""
-            <div class="result-card result-success slide-up">
-                <div style="display: flex; align-items: flex-start; gap: 2rem; flex-wrap: wrap;">
-                    <div style="flex: 1; min-width: 260px;">
-                        <div class="result-ico">&#9989;</div>
-                        <div class="result-ttl">Low Risk Assessment</div>
-                        <p style="color: #7B8794; font-size: 0.9rem; line-height: 1.7; margin-bottom: 1rem;">
-                            Based on the clinical parameters provided, the AI model indicates a low
-                            probability of heart disease. Continue maintaining a healthy lifestyle.
-                        </p>
-                        <div class="result-lbl">Confidence Level</div>
-                        <div class="result-prob">{safe_pct:.1f}%</div>
-                        <div class="risk-bar-bg">
-                            <div class="risk-bar-fill bar-success" style="width: {safe_pct}%;"></div>
-                        </div>
-                    </div>
-                    <div style="flex: 0 0 210px; min-width: 180px;">
-                        <div class="metric-box" style="margin-bottom: 0.8rem; border-color: rgba(6,214,160,0.2);">
-                            <div class="metric-val" style="color: #06D6A0;">{safe_pct:.1f}%</div>
-                            <div class="metric-lbl">Confidence</div>
-                        </div>
-                        <div class="metric-box" style="border-color: rgba(239,71,111,0.15);">
-                            <div class="metric-val" style="color: #FF6B6B;">{risk_pct:.1f}%</div>
-                            <div class="metric-lbl">Risk Level</div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            """, unsafe_allow_html=True)
-
-        # --- Patient Data Summary ---
-        st.markdown("<br/>", unsafe_allow_html=True)
-        st.markdown("""
-        <div class="section-hdr">
-            <div class="section-ico ico-blue">&#128202;</div>
-            <div>
-                <p class="section-lbl">Patient Data Summary</p>
-                <p class="section-sub">All input parameters used for analysis</p>
-            </div>
         </div>
         """, unsafe_allow_html=True)
 
-        st.markdown('<div class="glass-card">', unsafe_allow_html=True)
-
-        dl, dr = st.columns(2)
-        left_items = [
-            ("Age", f"{Age} years"),
-            ("Sex", "Male" if Sex == "M" else "Female"),
-            ("Chest Pain Type", ChestPainType),
-            ("Resting BP", f"{RestingBP} mm Hg"),
-            ("Cholesterol", f"{Cholesterol} mg/dl"),
-            ("Fasting Blood Sugar", "Yes (>120)" if FastingBS == 1 else "No"),
-        ]
-        right_items = [
-            ("Resting ECG", RestingECG),
-            ("Max Heart Rate", f"{MaxHR} bpm"),
-            ("Exercise Angina", "Yes" if ExerciseAngina == "Y" else "No"),
-            ("Oldpeak", str(Oldpeak)),
-            ("ST Slope", ST_Slope),
-            ("Prediction", "High Risk" if prediction[0] == 1 else "Low Risk"),
-        ]
-
-        with dl:
-            for k, v in left_items:
-                st.markdown(f'<div class="stat-row"><span class="stat-key">{k}</span><span class="stat-val">{v}</span></div>', unsafe_allow_html=True)
-        with dr:
-            for k, v in right_items:
-                color = "#EF476F" if k == "Prediction" and v == "High Risk" else ("#06D6A0" if k == "Prediction" else "var(--text-primary)")
-                st.markdown(f'<div class="stat-row"><span class="stat-key">{k}</span><span class="stat-val" style="color:{color};">{v}</span></div>', unsafe_allow_html=True)
-
-        st.markdown('</div>', unsafe_allow_html=True)
-
-        # Disclaimer
-        st.markdown("""
-        <div class="disclaimer-box">
-            <strong>Medical Disclaimer:</strong> This AI-powered tool is for educational and informational
-            purposes only. It is NOT a substitute for professional medical advice, diagnosis, or treatment.
-            Always consult a qualified healthcare provider.
-        </div>
-        """, unsafe_allow_html=True)
-
-    elif predict_clicked and not model_loaded:
-        st.markdown("""
-        <div class="result-card result-danger slide-up" style="text-align:center;">
-            <div class="result-ico">&#9888;&#65039;</div>
-            <div class="result-ttl">Model Not Available</div>
-            <p style="color: #7B8794; font-size: 0.9rem;">
-                The prediction model (<code style="background:rgba(230,57,70,0.15); padding:2px 8px;
-                border-radius:6px; color:#FF6B6B;">heart_pipeline.pkl</code>) could not be loaded.<br/>
-                Place it in the same directory as this script.
-            </p>
-        </div>
-        """, unsafe_allow_html=True)
-
+    # --- LOW RISK ---
     else:
-        st.markdown("""
-        <div style="text-align:center; padding: 5rem 2rem;" class="slide-up">
-            <div class="heartbeat" style="font-size: 5rem; margin-bottom: 1.2rem; opacity: 0.4;">&#129728;</div>
-            <div style="font-family: 'Space Grotesk', sans-serif; font-size: 1.4rem;
-                        color: #F1FAEE; font-weight: 700; margin-bottom: 0.5rem;">
-                Awaiting Patient Data
+        st.markdown(f"""
+        <div class="result-card result-success slide-up">
+            <div style="display: flex; align-items: flex-start; gap: 2rem; flex-wrap: wrap;">
+                <div style="flex: 1; min-width: 260px;">
+                    <div class="result-ico">&#9989;</div>
+                    <div class="result-ttl">Low Risk Assessment</div>
+                    <p style="color: #7B8794; font-size: 0.9rem; line-height: 1.7; margin-bottom: 1rem;">
+                        Based on the clinical parameters provided, the AI model indicates a low
+                        probability of heart disease. Continue maintaining a healthy lifestyle.
+                    </p>
+                    <div class="result-lbl">Confidence Level</div>
+                    <div class="result-prob">{safe_pct:.1f}%</div>
+                    <div class="risk-bar-bg">
+                        <div class="risk-bar-fill bar-success" style="width: {safe_pct}%;"></div>
+                    </div>
+                </div>
+                <div style="flex: 0 0 210px; min-width: 180px;">
+                    <div class="metric-box" style="margin-bottom: 0.8rem; border-color: rgba(6,214,160,0.2);">
+                        <div class="metric-val" style="color: #06D6A0;">{safe_pct:.1f}%</div>
+                        <div class="metric-lbl">Confidence</div>
+                    </div>
+                    <div class="metric-box" style="border-color: rgba(239,71,111,0.15);">
+                        <div class="metric-val" style="color: #FF6B6B;">{risk_pct:.1f}%</div>
+                        <div class="metric-lbl">Risk Level</div>
+                    </div>
+                </div>
             </div>
-            <p style="color: #7B8794; font-size: 0.9rem; max-width: 420px; margin: 0 auto; line-height: 1.7;">
-                Enter the patient's clinical parameters in the <strong style="color:#F1FAEE;">Patient Data Entry</strong> tab
-                and click <strong style="color:#F1FAEE;">Analyze Heart Health</strong> to see results.
-            </p>
         </div>
         """, unsafe_allow_html=True)
+
+    # --- Patient Data Summary ---
+    st.markdown("<br/>", unsafe_allow_html=True)
+    st.markdown("""
+    <div class="section-hdr">
+        <div class="section-ico ico-blue">&#128202;</div>
+        <div>
+            <p class="section-lbl">Patient Data Summary</p>
+            <p class="section-sub">All input parameters used for analysis</p>
+        </div>
+    </div>
+    """, unsafe_allow_html=True)
+
+    st.markdown('<div class="glass-card">', unsafe_allow_html=True)
+
+    dl, dr = st.columns(2)
+    left_items = [
+        ("Age", f"{Age} years"),
+        ("Sex", "Male" if Sex == "M" else "Female"),
+        ("Chest Pain Type", ChestPainType),
+        ("Resting BP", f"{RestingBP} mm Hg"),
+        ("Cholesterol", f"{Cholesterol} mg/dl"),
+        ("Fasting Blood Sugar", "Yes (>120)" if FastingBS == 1 else "No"),
+    ]
+    right_items = [
+        ("Resting ECG", RestingECG),
+        ("Max Heart Rate", f"{MaxHR} bpm"),
+        ("Exercise Angina", "Yes" if ExerciseAngina == "Y" else "No"),
+        ("Oldpeak", str(Oldpeak)),
+        ("ST Slope", ST_Slope),
+        ("Prediction", "High Risk" if prediction[0] == 1 else "Low Risk"),
+    ]
+
+    with dl:
+        for k, v in left_items:
+            st.markdown(f'<div class="stat-row"><span class="stat-key">{k}</span><span class="stat-val">{v}</span></div>', unsafe_allow_html=True)
+    with dr:
+        for k, v in right_items:
+            color = "#EF476F" if k == "Prediction" and v == "High Risk" else ("#06D6A0" if k == "Prediction" else "var(--text-primary)")
+            st.markdown(f'<div class="stat-row"><span class="stat-key">{k}</span><span class="stat-val" style="color:{color};">{v}</span></div>', unsafe_allow_html=True)
+
+    st.markdown('</div>', unsafe_allow_html=True)
+
+    # Disclaimer
+    st.markdown("""
+    <div class="disclaimer-box">
+        <strong>Medical Disclaimer:</strong> This AI-powered tool is for educational and informational
+        purposes only. It is NOT a substitute for professional medical advice, diagnosis, or treatment.
+        Always consult a qualified healthcare provider.
+    </div>
+    """, unsafe_allow_html=True)
+
+elif predict_clicked and not model_loaded:
+    st.markdown('<div class="divider"></div>', unsafe_allow_html=True)
+    st.markdown("""
+    <div class="result-card result-danger slide-up" style="text-align:center;">
+        <div class="result-ico">&#9888;&#65039;</div>
+        <div class="result-ttl">Model Not Available</div>
+        <p style="color: #7B8794; font-size: 0.9rem;">
+            The prediction model (<code style="background:rgba(230,57,70,0.15); padding:2px 8px;
+            border-radius:6px; color:#FF6B6B;">heart_pipeline.pkl</code>) could not be loaded.<br/>
+            Place it in the same directory as this script.
+        </p>
+    </div>
+    """, unsafe_allow_html=True)
 
 
 # =============================================
