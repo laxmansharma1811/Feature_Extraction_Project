@@ -15,10 +15,8 @@ st.set_page_config(
 # -----------------------------
 # Load Trained Pipeline
 # -----------------------------
-model_path = "heart_pipeline.pkl"
-if not os.path.exists(model_path):
-    st.error(f"Model file '{model_path}' not found.")
-    st.stop()
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+model_path = os.path.join(BASE_DIR, "heart_pipeline.pkl")
 
 model = joblib.load(model_path)
 
