@@ -4,12 +4,6 @@ import pandas as pd
 import os
 import time
 
-# =============================================
-#  CardioSense AI - Heart Disease Predictor
-#  Designed & Developed by Laxman Sharma
-# =============================================
-
-# ----- Page Config -----
 st.set_page_config(
     page_title="CardioSense AI | By Laxman Sharma",
     page_icon="https://em-content.zobj.net/source/apple/391/anatomical-heart_1fac0.png",
@@ -17,7 +11,7 @@ st.set_page_config(
     initial_sidebar_state="expanded"
 )
 
-# ----- Premium Custom CSS -----
+# ----- Custom CSS -----
 st.markdown("""
 <style>
     /* ===== GOOGLE FONTS ===== */
