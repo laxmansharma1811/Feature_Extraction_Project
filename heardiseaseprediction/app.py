@@ -611,7 +611,6 @@ else:
 #  PATIENT DATA ENTRY
 # =============================================
 
-# --- Patient Demographics ---
 st.markdown("""
 <div class="section-hdr">
     <div class="section-ico ico-red">&#128100;</div>
