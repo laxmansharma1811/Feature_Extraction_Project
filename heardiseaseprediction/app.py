@@ -634,7 +634,7 @@ with c3:
 
 st.markdown('<div class="divider"></div>', unsafe_allow_html=True)
 
-# --- Vital Signs ---
+
 st.markdown("""
 <div class="section-hdr">
     <div class="section-ico ico-blue">&#128137;</div>
@@ -658,7 +658,7 @@ with c6:
 
 st.markdown('<div class="divider"></div>', unsafe_allow_html=True)
 
-# --- Cardiac Assessment ---
+
 st.markdown("""
 <div class="section-hdr">
     <div class="section-ico ico-grn">&#129728;</div>
